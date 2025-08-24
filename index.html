@@ -64,30 +64,29 @@
         id: u.id, username: u.username, first_name: u.first_name, language_code: u.language_code
       }, null, 2);
     }
+<h3>Complete this Task & Earn Coins</h3>
 
-    // Fake coin claim (demo)
-    document.getElementById('claim').addEventListener('click', (e) => {
-      e.preventDefault();
-      alert('10 Coins added (demo)!');
-      // চাইলে tg.sendData(...) দিয়ে বটে ডেটা পাঠাতে পারো
-      // tg.sendData(JSON.stringify({ event: 'claim', amount: 10 }));
-    });
-
-    // ============== Monetag / Adsterra Example ==============
-    // 👉 এখানে তোমার নেটওয়ার্ক থেকে পাওয়া স্ক্রিপ্ট বসাব
-	// s.async = true;
-    // document.getElementById('ad-box').appendChild(s);
-
-    // Example: Monetag (replace with your real JS)
-    // let m = document.createElement('script');
-    // m.src = "//monetag.com/XXXX/XXXX/ad-tag.js";
-    // m.async = true;
-    // document.getElementById('ad-box').appendChild(m);
-
+<!-- এখানে Banner Ad -->
+<div style="margin: 10px auto; text-align:center;">
+  <script type="text/javascript">
+      atOptions = {
+          'key' : '6928b0f5b1a27066c76882257e555423',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+      };
   </script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/6928b0f5b1a27066c76882257e555423/invoke.js"></script>
+</div>
+<div style="margin:20px 0;">
+  <p>✅ Congratulations! You earned 10 coins</p>
+
+  <!-- এখানে Native Ad -->
+  <script async="async" data-cfasync="false" src="//pl25115346.profitableratecpm.com/ca1b8379ef33060d43ac0c3db8e8035e/invoke.js"></script>
+  <div id="container-ca1b8379ef33060d43ac0c3db8e8035e"></div>
+</div>	
+
+	</script>
 </body>
-
 </html>
-
-
-
