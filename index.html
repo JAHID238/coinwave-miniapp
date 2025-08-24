@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CoinWave Mini App</title>
+  <style>
+    body { font-family: system-ui, Arial; margin:0; background:#f6f7fb; color:#111; }
+    header { padding:16px; text-align:center; background:#0088cc; color:#fff; font-weight:600; }
+    .wrap { max-width:720px; margin:0 auto; padding:16px; }
+    .card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,.06); margin:12px 0; }
+    .btn { display:inline-block; padding:12px 16px; background:#0088cc; color:#fff; border-radius:8px; text-decoration:none; }
+    .muted { color:#777; font-size:14px; }
+    #ad-box { min-height:90px; display:flex; align-items:center; justify-content:center; border:1px dashed #ddd; border-radius:10px; margin-top:8px; }
+  </style>
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <header>CoinWave — Mini App</header>
+
+  <div class="wrap">
+    <div class="card">
+      <h2>স্বাগতম 👋</h2>
+      <p class="muted">এই Mini App টেলিগ্রামের ভেতরে চলছে। নিচে সেফ ফরম্যাটের Ads (Banner/In-Page) বসাতে পারো।</p>
+
+      <h3>Ad Box</h3>
+      <div id="<script type="text/javascript">
+	atOptions = {
+		'key' : 'cea9f9301f48de0d3b6fbaed02bdaf8f',
+		'format' : 'iframe',
+		'height' : 250,
+		'width' : 300,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/cea9f9301f48de0d3b6fbaed02bdaf8f/invoke.js"></script>">Your Ad will load here…</div>
+      <p class="muted">⚠️ Popunder/Force-click ব্যবহার করো না—Telegram/Ad Network ব্লক করতে পারে।</p>
+
+      <div style="margin-top:12px">
+        <a href="#" class="btn" id="claim">Claim 10 Coins</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>User Info</h3>
+      <pre id="user"></pre>
+    </div>
+  </div>
+
+  <script>
+    // Telegram theme/viewport
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.expand(); // full height
+      tg.MainButton.setText("Close Mini App");
+      tg.MainButton.onClick(() => tg.close());
+      tg.MainButton.show();
+
+      // Show basic user data
+      const u = tg.initDataUnsafe?.user || {};
+      document.getElementById('user').textContent = JSON.stringify({
+        id: u.id, username: u.username, first_name: u.first_name, language_code: u.language_code
+      }, null, 2);
+    }
+
+    // Fake coin claim (demo)
+    document.getElementById('claim').addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('10 Coins added (demo)!');
+      // চাইলে tg.sendData(...) দিয়ে বটে ডেটা পাঠাতে পারো
+      // tg.sendData(JSON.stringify({ event: 'claim', amount: 10 }));
+    });
+
+    // ============== Monetag / Adsterra Example ==============
+    // 👉 এখানে তোমার নেটওয়ার্ক থেকে পাওয়া স্ক্রিপ্ট বসাবে
+
+    // Example: Adsterra (<script type="text/javascript">
+	atOptions = {
+		'key' : '4e42b5a34c01b305e1a42f911085b321',
+		'format' : 'iframe',
+		'height' : 90,
+		'width' : 728,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/4e42b5a34c01b305e1a42f911085b321/invoke.js"></script>";
+    // s.async = true;
+    // document.getElementById('ad-box').appendChild(s);
+
+    // Example: Monetag (replace with your real JS)
+    // let m = document.createElement('script');
+    // m.src = "//monetag.com/XXXX/XXXX/ad-tag.js";
+    // m.async = true;
+    // document.getElementById('ad-box').appendChild(m);
+
+  </script>
+</body>
+</html>
