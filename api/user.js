@@ -3,23 +3,37 @@ import { verifyTelegram, getUserFromInit } from './_verify';
 
 export default async function handler(req, res){
   try{
-    if(req.method!=='POST') return res.status(405).json({success:false,message:'Method not allowed'});
+    // 1️⃣ HTTP Method check
+    if(req.method!=='POST') 
+      return res.status(405).json({success:false,message:'Method not allowed'});
+
     const { initData, initDataUnsafe } = req.body||{};
-    if(!verifyTelegram(initData)) return res.status(401).json({success:false,message:'Auth failed'});
+
+    // 2️⃣ Telegram signature verification
+    if(!verifyTelegram(initData)) 
+      return res.status(401).json({success:false,message:'Auth failed'});
 
     const db = await getDb();
     const users = db.collection('users');
 
+    // 3️⃣ Extract user info
     const u = getUserFromInit(initDataUnsafe);
-    if(!u.tgId) return res.status(400).json({success:false,message:'User missing'});
+    if(!u.tgId) 
+      return res.status(400).json({success:false,message:'User missing'});
 
-    // Referral (only on create)
-    const startParam = initDataUnsafe?.start_param || null;
+    // 4️⃣ Referral param (sanitize)
+    let startParam = initDataUnsafe?.start_param || null;
+    if(startParam && isNaN(Number(startParam))) startParam = null;
 
+    // 5️⃣ Find or create user
     let user = await users.findOne({ tgId: u.tgId });
     if(!user){
       user = {
-        ...u,
+        tgId: u.tgId,
+        first_name: u.first_name || '',
+        last_name: u.last_name || '',
+        username: u.username || '',
+        language_code: u.language_code || 'bn',
         coins: 0,
         streak: 0,
         lastDaily: null,
@@ -27,19 +41,39 @@ export default async function handler(req, res){
         referredBy: null,
         createdAt: new Date()
       };
-      if(startParam){ // credit referrer 50 coins
+
+      // 6️⃣ Handle referral (only once)
+      if(startParam){
         const refBy = await users.findOne({ tgId: Number(startParam) });
         if(refBy){
           user.referredBy = refBy.tgId;
-          await users.updateOne({ tgId: refBy.tgId }, { $inc:{ coins:50 } }, { upsert:false });
+          // Atomic increment with upsert:false
+          await users.updateOne({ tgId: refBy.tgId }, { $inc:{ coins:50 } });
         }
       }
+
       await users.insertOne(user);
     }
 
-    return res.json({success:true,user});
+    // 7️⃣ Response
+    return res.json({
+      success:true,
+      user: {
+        tgId: user.tgId,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        username: user.username,
+        language_code: user.language_code,
+        coins: user.coins,
+        streak: user.streak,
+        lastDaily: user.lastDaily,
+        lastClaimAt: user.lastClaimAt,
+        referredBy: user.referredBy
+      }
+    });
+
   }catch(e){
-    console.error(e);
+    console.error('User API error:', e);
     return res.status(500).json({success:false,message:'Server error'});
   }
 }
