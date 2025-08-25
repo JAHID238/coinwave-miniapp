@@ -2,117 +2,187 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CoinWave Mini App</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>CoinWave — Mini Earnings App</title>
   <style>
-    body { font-family: system-ui, Arial; margin:0; background:#f3f5fa; color:#111; }
-    header { padding:16px; text-align:center; background:#0088cc; color:#fff; font-weight:600; font-size:20px; }
-    .wrap { max-width:720px; margin:0 auto; padding:16px; }
-    .card { background:#fff; border-radius:16px; padding:20px; box-shadow:0 4px 16px rgba(0,0,0,.08); margin:16px 0; }
-    .btn { display:inline-block; padding:12px 20px; background:#0088cc; color:#fff; border-radius:10px; text-decoration:none; font-weight:600; transition:.2s; }
-    .btn:hover { background:#006fa6; }
-    .muted { color:#777; font-size:14px; }
-    .balance { font-size:22px; font-weight:700; margin:10px 0; color:#0088cc; }
-    .progress { background:#eee; border-radius:10px; overflow:hidden; height:12px; margin:8px 0; }
-    .progress-bar { height:100%; background:#0088cc; width:0%; transition:.3s; }
-    .task { padding:12px; border:1px solid #eee; border-radius:10px; margin:10px 0; }
-    .task p { margin:0 0 8px; }
-    .ad-box { min-height:90px; border:1px dashed #ccc; border-radius:10px; padding:8px; display:flex; align-items:center; justify-content:center; margin-top:10px; font-size:14px; color:#777; }
+    :root { --primary:#0088cc; --bg:#f3f5fa; }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,Arial;background:var(--bg);color:#111}
+    header{padding:16px;text-align:center;background:var(--primary);color:#fff;font-weight:700}
+    .wrap{max-width:780px;margin:0 auto;padding:16px}
+    .grid{display:grid;gap:16px}
+    @media (min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+    .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+    .title{margin:0 0 8px;font-size:18px;font-weight:700}
+    .muted{color:#667; font-size:14px}
+    .balance{font-size:28px;font-weight:800;color:var(--primary)}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .btn{display:inline-block;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,#00b7ff,#0077ff);color:#fff;text-decoration:none;font-weight:700;box-shadow:0 6px 16px rgba(0,123,255,.25);transition:.2s}
+    .btn:hover{opacity:.9}
+    .btn-outline{background:#fff;color:var(--primary);border:1px solid #cfe8ff}
+    .ad-box{min-height:100px;border:1px dashed #cfd8e3;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#778;padding:8px}
+    .task{border:1px solid #eef2f8;border-radius:12px;padding:12px;margin:10px 0}
+    .progress{height:12px;background:#eef2f8;border-radius:12px;overflow:hidden}
+    .bar{height:100%;width:0%;background:linear-gradient(90deg,#00e1ff,#0088cc);transition:.4s}
+    pre{background:#f6f7fb;padding:12px;border-radius:10px;overflow:auto}
+    .note{font-size:12px;color:#6b7280;margin-top:6px}
   </style>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <header>💎 CoinWave — Mini App</header>
+<header>💎 CoinWave — Mini Earnings App</header>
 
-  <div class="wrap">
+<div class="wrap">
+
+  <div class="grid">
+    <!-- Balance / Actions -->
     <div class="card">
-      <h2>👋 স্বাগতম</h2>
-      <p class="muted">কাজ করো → Ad দেখো → Coins Claim করো → পরে Cashout করো!</p>
-
-      <div class="balance">Balance: <span id="coin-balance">0</span> 🪙</div>
-      <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+      <p class="title">🔢 Balance</p>
+      <div class="balance"><span id="balance">0</span> 🪙</div>
+      <div class="progress" style="margin:10px 0 14px"><div class="bar" id="bar"></div></div>
+      <div class="row" style="gap:10px;flex-wrap:wrap">
+        <a href="#" class="btn" id="dailyBtn">🎁 Daily Bonus</a>
+        <a href="#" class="btn btn-outline" id="withdrawBtn">💵 Withdraw</a>
+      </div>
+      <div class="note">Tip: Daily bonus নিলেই streak বাড়ে, বেশি reward পাবে।</div>
     </div>
 
+    <!-- User -->
     <div class="card">
-      <h3>🔥 Available Tasks</h3>
-
-      <div class="task">
-        <p>▶ Watch Banner Ad (300x250)</p>
-        <a href="#" class="btn claim-btn" data-coins="10" data-ad="banner-300x250">Claim 10 Coins</a>
-        <div id="banner-300x250" class="ad-box">Ad will load here after click...</div>
-      </div>
-
-      <div class="task">
-        <p>▶ Watch Native Ad</p>
-        <a href="#" class="btn claim-btn" data-coins="15" data-ad="native-banner">Claim 15 Coins</a>
-        <div id="native-banner" class="ad-box">Ad will load here after click...</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>👤 User Info</h3>
-      <pre id="user"></pre>
+      <p class="title">👤 Profile</p>
+      <pre id="user">Loading...</pre>
+      <div class="note">Referral: Bot link দিয়ে ইনভাইট করলে bonus পাওয়া যাবে।</div>
     </div>
   </div>
 
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.expand();
-      const u = tg.initDataUnsafe?.user || {};
-      document.getElementById('user').textContent = JSON.stringify({
-        id:u.id, username:u.username, first_name:u.first_name, lang:u.language_code
-      }, null, 2);
+  <!-- Tasks -->
+  <div class="card">
+    <p class="title">🔥 Tasks</p>
+
+    <div class="task">
+      <div class="row"><b>▶ Watch Banner (300×250)</b> <a href="#" class="btn claim" data-amount="10" data-ad="banner">Claim 10</a></div>
+      <div id="banner" class="ad-box">Click “Claim 10” → Ad loads here → Wait 5s → Coins added</div>
+    </div>
+
+    <div class="task">
+      <div class="row"><b>▶ Watch Native Ad</b> <a href="#" class="btn claim" data-amount="15" data-ad="native">Claim 15</a></div>
+      <div id="native" class="ad-box">Click “Claim 15” → Ad loads here → Wait 5s → Coins added</div>
+    </div>
+
+    <div class="task">
+      <div class="row"><b>📝 Complete Survey</b> <a href="#" class="btn claim" data-amount="20" data-ad="">Claim 20</a></div>
+      <div class="note">Survey external হলে redirect দেখাতে পারো; backend validate করবে।</div>
+    </div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div class="card">
+    <p class="title">🏆 Top Earners</p>
+    <div id="board" class="muted">Loading…</div>
+  </div>
+
+  <!-- Policy -->
+  <div class="card">
+    <p class="title">⚠️ Ad Policy</p>
+    <div class="muted">Popunder/force-click ব্যবহার কোরো না—Telegram/Ad network ব্লক করতে পারে। শুধুমাত্র in-page banner/native ব্যবহার করো।</div>
+  </div>
+
+</div>
+
+<script>
+  // ---- Telegram init ----
+  const tg = window.Telegram?.WebApp;
+  if (tg) tg.expand();
+
+  // State
+  let user = null;
+  const $ = (s)=>document.querySelector(s);
+  const balanceEl = $('#balance');
+  const barEl = $('#bar');
+  const setBalance = (v)=>{ balanceEl.textContent = v; barEl.style.width = Math.min((v%100)/100*100,100)+'%'; };
+
+  // Helpers
+  const api = (p, data)=>fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data||{})}).then(r=>r.json());
+
+  // Load user + leaderboard
+  async function boot(){
+    const payload = { initData: tg?.initData || '', initDataUnsafe: tg?.initDataUnsafe || null };
+    const info = await api('/api/user', payload);
+    if(!info.success){ alert(info.message||'Auth failed'); return; }
+    user = info.user;
+    setBalance(user.coins||0);
+    $('#user').textContent = JSON.stringify({
+      id:user.tgId, name:user.first_name+' '+(user.last_name||''), username:user.username, lang:user.language_code, streak:user.streak||0
+    }, null, 2);
+
+    const lb = await api('/api/leaderboard',{});
+    if(lb.success){
+      $('#board').innerHTML = lb.top.map((u,i)=>`#${i+1} — ${u.username||('User'+u.tgId)} — <b>${u.coins}</b>🪙`).join('<br>');
     }
+  }
 
-    let coins = 0;
-    const coinBalance = document.getElementById('coin-balance');
-    const progressBar = document.getElementById('progress-bar');
+  // Daily Bonus
+  $('#dailyBtn').addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const res = await api('/api/daily',{ initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null });
+    if(!res.success){ alert(res.message||'Daily failed'); return; }
+    setBalance(res.coins);
+    alert('✅ Daily bonus: +'+res.added+' coins (streak '+res.streak+')');
+  });
 
-    document.querySelectorAll('.claim-btn').forEach(btn=>{
-      btn.addEventListener('click', e=>{
-        e.preventDefault();
-        let amount = parseInt(btn.dataset.coins);
-        let adId = btn.dataset.ad;
-        const adBox = document.getElementById(adId);
+  // Withdraw (simple request demo → backend validates min)
+  $('#withdrawBtn').addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const amount = prompt('Withdraw কত Coins? (উদাহরণ: 5000)');
+    if(!amount) return;
+    const res = await api('/api/withdraw',{ amount: Number(amount), initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null });
+    alert(res.message || (res.success?'Requested ✅':'Failed ❌'));
+  });
 
-        adBox.innerHTML = "⏳ Loading Ad...";
+  // Claim buttons: load ad → wait 5s → claim
+  document.querySelectorAll('.claim').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      const amt = Number(btn.dataset.amount);
+      const adType = btn.dataset.ad; // 'banner' | 'native' | ''
+      const box = adType ? document.getElementById(adType) : null;
 
-        // ===== Inject Ad Codes =====
-        if(adId === "banner-300x250"){
-          let s = document.createElement('script');
-          s.type = "text/javascript";
-          s.innerHTML = `
+      if(adType && box){
+        box.innerHTML = '⏳ Loading ad…';
+        // Inject correct ad code:
+        if(adType === 'banner'){
+          // Adsterra Banner 300x250 (your key + invoke)
+          const s1 = document.createElement('script');
+          s1.type='text/javascript';
+          s1.innerHTML = `
             atOptions = {
               'key' : '6928b0f5b1a27066c76882257e555423',
-              'format' : 'iframe',
-              'height' : 250,
-              'width' : 300,
-              'params' : {}
+              'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {}
             };
           `;
-          adBox.appendChild(s);
-          let js = document.createElement('script');
-          js.src = "//www.highperformanceformat.com/6928b0f5b1a27066c76882257e555423/invoke.js";
-          adBox.appendChild(js);
+          const s2 = document.createElement('script');
+          s2.type='text/javascript';
+          s2.src='//www.highperformanceformat.com/6928b0f5b1a27066c76882257e555423/invoke.js';
+          box.innerHTML=''; box.appendChild(s1); box.appendChild(s2);
         }
-
-        if(adId === "native-banner"){
-          let js = document.createElement('script');
-          js.src = "//pl25115346.profitableratecpm.com/ca1b8379ef33060d43ac0c3db8e8035e/invoke.js";
-          js.async = true;
-          adBox.appendChild(js);
+        if(adType === 'native'){
+          const s = document.createElement('script');
+          s.async=true; s.setAttribute('data-cfasync','false');
+          s.src='//pl25115346.profitableratecpm.com/ca1b8379ef33060d43ac0c3db8e8035e/invoke.js';
+          box.innerHTML=''; box.appendChild(s);
         }
+        // enforce watch time
+        await new Promise(r=>setTimeout(r, 5000));
+      }
 
-        // ===== Delay Coins after Ad =====
-        setTimeout(()=>{
-          coins += amount;
-          coinBalance.textContent = coins;
-          progressBar.style.width = Math.min((coins/100)*100,100)+"%";
-          alert("✅ " + amount + " Coins Added!");
-        }, 5000); // 5 sec wait for ad
-      });
+      // Now call backend to claim (with cooldown & auth)
+      const res = await api('/api/claim',{ amount: amt, type: adType||'task', initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null });
+      if(!res.success){ alert(res.message||'Claim failed'); return; }
+      setBalance(res.coins);
+      alert('✅ +'+amt+' coins added!');
     });
-  </script>
+  });
+
+  boot();
+</script>
 </body>
 </html>
