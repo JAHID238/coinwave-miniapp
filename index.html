@@ -3,58 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CoinWave Mini App</title>
+  <title>CoinWave Pro Mini App</title>
   <style>
-    body { font-family: system-ui, Arial; margin:0; background:#f6f7fb; color:#111; }
-    header { padding:16px; text-align:center; background:#0088cc; color:#fff; font-weight:600; font-size:18px; }
+    body { margin:0; font-family: system-ui, Arial; background:#f4f5f9; color:#111; }
+    header { padding:16px; text-align:center; background:#0055aa; color:#fff; font-weight:600; font-size:18px; }
     .wrap { max-width:720px; margin:0 auto; padding:16px; }
-    .card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,.06); margin:12px 0; }
-    .btn { display:inline-block; padding:12px 16px; background:#0088cc; color:#fff; border-radius:8px; text-decoration:none; font-weight:500; }
+    .card { background:#fff; border-radius:16px; padding:16px; box-shadow:0 6px 20px rgba(0,0,0,.08); margin:12px 0; }
+    .btn { display:inline-block; padding:12px 16px; background:linear-gradient(90deg,#00c6ff,#0072ff); color:#fff; border-radius:10px; text-decoration:none; font-weight:600; transition:0.3s; }
+    .btn:hover { opacity:0.85; }
     .muted { color:#777; font-size:14px; }
-    .ad-box { display:flex; align-items:center; justify-content:center; border:1px dashed #ddd; border-radius:10px; margin:8px 0; min-height:90px; }
+    .ad-box { display:flex; align-items:center; justify-content:center; border:1px dashed #ddd; border-radius:12px; margin:12px 0; min-height:90px; }
+    .progress-container { background:#eee; border-radius:12px; overflow:hidden; margin-top:8px; height:12px; }
+    .progress-bar { height:12px; width:0%; background:#00c6ff; transition:0.5s; }
+    h2,h3 { margin:8px 0; }
     pre { background:#f0f0f0; padding:12px; border-radius:8px; overflow-x:auto; }
   </style>
-  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <header>CoinWave — Mini App</header>
-
+  <header>CoinWave Pro — Mini App</header>
   <div class="wrap">
 
-    <!-- Welcome & Ads Card -->
+    <!-- Coins Balance -->
     <div class="card">
-      <h2>স্বাগতম 👋</h2>
-      <p class="muted">এই Mini App টেলিগ্রামের ভেতরে চলছে। নিচে Adsterra থেকে পাওয়া Safe Ads দেখাবে।</p>
-
-      <!-- Banner 300x250 -->
-      <h3>Ad Banner (300x250)</h3>
-      <div id="banner-300x250" class="ad-box">Loading Banner...</div>
-      <script type="text/javascript">
-          atOptions = {
-              'key' : '6928b0f5b1a27066c76882257e555423', // তোমার Adsterra Banner key
-              'format' : 'iframe',
-              'height' : 250,
-              'width' : 300,
-              'params' : {}
-          };
-      </script>
-      <script type="text/javascript" src="//www.highperformanceformat.com/6928b0f5b1a27066c76882257e555423/invoke.js"></script>
-
-      <!-- Native Banner -->
-      <h3>Native Banner</h3>
-      <div id="native-banner" class="ad-box">Loading Native Ad...</div>
-      <script async="async" data-cfasync="false" src="//pl25115346.profitableratecpm.com/ca1b8379ef33060d43ac0c3db8e8035e/invoke.js"></script>
-
-      <p class="muted">⚠️ Popunder/Force-click ব্যবহার করো না—Telegram/Ad Network ব্লক করতে পারে।</p>
-
-      <!-- Claim Button -->
-      <div style="margin-top:12px">
-        <a href="#" class="btn" id="claim">Claim 10 Coins</a>
+      <h2>Coins Balance</h2>
+      <p style="font-size:24px; font-weight:600;" id="coin-balance">0 Coins</p>
+      <div class="progress-container">
+        <div class="progress-bar" id="coin-progress"></div>
       </div>
     </div>
 
-    <!-- User Info Card -->
+    <!-- Tasks List -->
+    <div class="card">
+      <h2>Daily Tasks</h2>
+      <div class="task">
+        <p>Watch Banner Ad</p>
+        <a href="#" class="btn claim-btn" data-coins="5">Claim 5 Coins</a>
+      </div>
+      <div class="task" style="margin-top:8px;">
+        <p>Watch Native Ad</p>
+        <a href="#" class="btn claim-btn" data-coins="10">Claim 10 Coins</a>
+      </div>
+      <div class="task" style="margin-top:8px;">
+        <p>Complete Survey</p>
+        <a href="#" class="btn claim-btn" data-coins="15">Claim 15 Coins</a>
+      </div>
+    </div>
+
+    <!-- Ads Section -->
+    <div class="card">
+      <h3>Ad Banner (300x250)</h3>
+      <div id="banner-300x250" class="ad-box">Loading Banner...</div>
+
+      <h3>Native Banner</h3>
+      <div id="native-banner" class="ad-box">Loading Native Ad...</div>
+    </div>
+
+    <!-- User Info -->
     <div class="card">
       <h3>User Info</h3>
       <pre id="user">Loading user info...</pre>
@@ -63,12 +68,12 @@
   </div>
 
   <script>
-    // Telegram WebApp Integration
+    // Telegram Integration
     const tg = window.Telegram?.WebApp;
-    if (tg) {
+    if(tg){
       tg.expand();
       tg.MainButton.setText("Close Mini App");
-      tg.MainButton.onClick(() => tg.close());
+      tg.MainButton.onClick(()=>tg.close());
       tg.MainButton.show();
 
       const u = tg.initDataUnsafe?.user || {};
@@ -77,13 +82,36 @@
       }, null, 2);
     }
 
-    // Fake coin claim
-    document.getElementById('claim').addEventListener('click', (e) => {
-      e.preventDefault();
-      alert('10 Coins added (demo)!');
-      // চাইলে এখানে tg.sendData(...) দিয়ে backend এ data পাঠাতে পারো
-      // tg.sendData(JSON.stringify({ event: 'claim', amount: 10 }));
+    // Coins Claim System
+    let coins = 0;
+    const coinBalance = document.getElementById('coin-balance');
+    const progressBar = document.getElementById('coin-progress');
+    document.querySelectorAll('.claim-btn').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        e.preventDefault();
+        let amount = parseInt(btn.dataset.coins);
+        coins += amount;
+        coinBalance.textContent = coins + " Coins";
+        let progress = Math.min((coins/100)*100,100);
+        progressBar.style.width = progress+"%";
+        alert(amount + " Coins added!");
+        // এখানে tg.sendData(...) দিয়ে backend এ পাঠাতে পারো
+      });
     });
+
+    // ============== Adsterra Integration ==============
+    // Banner
+    let banner = document.createElement('script');
+    banner.type = "text/javascript";
+    banner.src = "//www.highperformanceformat.com/6928b0f5b1a27066c76882257e555423/invoke.js";
+    document.getElementById('banner-300x250').appendChild(banner);
+
+    // Native
+    let native = document.createElement('script');
+    native.type = "text/javascript";
+    native.async = true;
+    native.src = "//pl25115346.profitableratecpm.com/ca1b8379ef33060d43ac0c3db8e8035e/invoke.js";
+    document.getElementById('native-banner').appendChild(native);
   </script>
 </body>
 </html>
