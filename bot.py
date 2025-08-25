@@ -1,11 +1,10 @@
-# bot/bot.py
 import os
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-TOKEN = os.getenv("8363127566:AAGFH_9_FM846SJTpYGhbC1fmap-7Odmzlk")  # BotFather token
-
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://your-miniapp.example.com")  # Vercel/Netlify URL
+# BotFather token
+TOKEN = os.getenv("8363127566:AAGFH_9_FM846SJTpYGhbC1fmap-7Odmzlk")  # set environment variable BOT_TOKEN
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://coinwave-miniapp.vercel.app")  # Vercel / Netlify URL
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     kb = InlineKeyboardMarkup([
@@ -26,5 +25,5 @@ def main():
     print("Bot is running…")
     app.run_polling()
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()
