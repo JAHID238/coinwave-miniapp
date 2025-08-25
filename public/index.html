@@ -2,55 +2,70 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>CoinWave — Pro Earnings App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CoinWave Pro — Premium Mini App</title>
   <style>
-    :root { --primary:#0088cc; --bg:#f3f5fa; }
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,Arial;background:var(--bg);color:#111}
-    header{padding:16px;text-align:center;background:var(--primary);color:#fff;font-weight:700}
+    :root {
+      --primary:#0088cc;
+      --bg:#f3f5fa;
+      --success:#4caf50;
+      --danger:#ff3b30;
+      --accent:#00b7ff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,Arial;background:var(--bg);color:#111}
+    header{padding:16px;text-align:center;background:var(--primary);color:#fff;font-weight:700;font-size:20px;}
     .wrap{max-width:780px;margin:0 auto;padding:16px}
     .grid{display:grid;gap:16px}
     @media (min-width:720px){.grid{grid-template-columns:1fr 1fr}}
-    .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+    .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.08);position:relative}
     .title{margin:0 0 8px;font-size:18px;font-weight:700}
     .muted{color:#667; font-size:14px}
     .balance{font-size:28px;font-weight:800;color:var(--primary)}
-    .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-    .btn{display:inline-block;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,#00b7ff,#0077ff);color:#fff;text-decoration:none;font-weight:700;box-shadow:0 6px 16px rgba(0,123,255,.25);transition:.2s}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+    .btn{display:inline-block;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,var(--accent),#0077ff);color:#fff;text-decoration:none;font-weight:700;box-shadow:0 6px 16px rgba(0,123,255,.25);transition:.2s;cursor:pointer;}
     .btn:hover{opacity:.9}
     .btn-outline{background:#fff;color:var(--primary);border:1px solid #cfe8ff}
-    .ad-box{min-height:100px;border:1px dashed #cfd8e3;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#778;padding:8px}
-    .task{border:1px solid #eef2f8;border-radius:12px;padding:12px;margin:10px 0}
-    .progress{height:12px;background:#eef2f8;border-radius:12px;overflow:hidden}
-    .bar{height:100%;width:0%;background:linear-gradient(90deg,#00e1ff,#0088cc);transition:.4s}
+    .ad-box{min-height:100px;border:1px dashed #cfd8e3;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#778;padding:8px;margin-top:8px}
+    .task{border:1px solid #eef2f8;border-radius:12px;padding:12px;margin:10px 0;position:relative}
+    .progress{height:12px;background:#eef2f8;border-radius:12px;overflow:hidden;margin-top:6px}
+    .bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--primary));transition:.4s}
     pre{background:#f6f7fb;padding:12px;border-radius:10px;overflow:auto}
     .note{font-size:12px;color:#6b7280;margin-top:6px}
+    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--success);color:#fff;padding:12px 20px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.2);opacity:0;transition:.4s;z-index:999;}
+    .toast.show{opacity:1;}
+    .history{max-height:150px;overflow-y:auto;margin-top:8px;font-size:13px;background:#f7f9fc;padding:8px;border-radius:8px;border:1px solid #e0e5f1;}
   </style>
+
+  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Monetag SDK -->
+  <script src='//libtl.com/sdk.js' data-zone='9768758' data-sdk='show_9768758'></script>
 </head>
 <body>
-<header>💎 CoinWave — Mini Earnings App</header>
+<header>💎 CoinWave Pro — Premium Mini App</header>
 
 <div class="wrap">
-
   <div class="grid">
     <!-- Balance / Actions -->
     <div class="card">
       <p class="title">🔢 Balance</p>
       <div class="balance"><span id="balance">0</span> 🪙</div>
-      <div class="progress" style="margin:10px 0 14px"><div class="bar" id="bar"></div></div>
-      <div class="row" style="gap:10px;flex-wrap:wrap">
-        <a href="#" class="btn" id="dailyBtn">🎁 Daily Bonus</a>
-        <a href="#" class="btn btn-outline" id="withdrawBtn">💵 Withdraw</a>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="row">
+        <a class="btn" id="dailyBtn">🎁 Daily Bonus</a>
+        <a class="btn btn-outline" id="withdrawBtn">💵 Withdraw</a>
       </div>
-      <div class="note">Tip: Daily bonus নিলেই streak বাড়ে, বেশি reward পাবে।</div>
+      <div class="note">Daily bonus নিলে streak বাড়বে, বেশি reward পাবো।</div>
+      <div class="note" id="streakNote"></div>
     </div>
 
     <!-- User -->
     <div class="card">
       <p class="title">👤 Profile</p>
       <pre id="user">Loading...</pre>
-      <div class="note">Referral: Bot link দিয়ে ইনভাইট করলে bonus পাওয়া যাবে।</div>
+      <div class="note">Referral: Bot link দিয়ে ইনভাইট করলে bonus পাবেন।</div>
     </div>
   </div>
 
@@ -59,18 +74,25 @@
     <p class="title">🔥 Tasks</p>
 
     <div class="task">
-      <div class="row"><b>▶ Watch Banner (300×250)</b> <a href="#" class="btn claim" data-amount="10" data-ad="banner">Claim 10</a></div>
+      <div class="row"><b>▶ Watch Banner (300×250)</b> <a class="btn claim" data-amount="10" data-ad="banner">Claim 10</a></div>
       <div id="banner" class="ad-box">Click “Claim 10” → Ad loads here → Wait 5s → Coins added</div>
+      <div class="progress"><div class="bar" id="banner-bar"></div></div>
     </div>
 
     <div class="task">
-      <div class="row"><b>▶ Watch Native Ad</b> <a href="#" class="btn claim" data-amount="15" data-ad="native">Claim 15</a></div>
+      <div class="row"><b>▶ Watch Native Ad</b> <a class="btn claim" data-amount="15" data-ad="native">Claim 15</a></div>
       <div id="native" class="ad-box">Click “Claim 15” → Ad loads here → Wait 5s → Coins added</div>
+      <div class="progress"><div class="bar" id="native-bar"></div></div>
     </div>
 
     <div class="task">
-      <div class="row"><b>📝 Complete Survey</b> <a href="#" class="btn claim" data-amount="20" data-ad="">Claim 20</a></div>
-      <div class="note">Survey external হলে redirect দেখাতে পারো; backend validate করবে।</div>
+      <div class="row"><b>📝 Complete Survey</b> <a class="btn claim" data-amount="20" data-ad="">Claim 20</a></div>
+      <div class="note">Survey external হলে redirect দেখাবে; backend validate করবে।</div>
+    </div>
+
+    <div class="card">
+      <p class="title">🕒 Recent Earnings</p>
+      <div id="history" class="history">No history yet.</div>
     </div>
   </div>
 
@@ -80,39 +102,60 @@
     <div id="board" class="muted">Loading…</div>
   </div>
 
-  <!-- Policy -->
+  <!-- Ad Policy -->
   <div class="card">
     <p class="title">⚠️ Ad Policy</p>
-    <div class="muted">Popunder/force-click ব্যবহার কোরো না—Telegram/Ad network ব্লক করতে পারে। শুধুমাত্র in-page banner/native ব্যবহার করো।</div>
+    <div class="muted">Popunder/force-click ব্যবহার করবেন না। শুধু in-page banner/native ads ব্যবহার করুন।</div>
   </div>
-
 </div>
 
-<script>
-  // ---- Telegram init ----
-  const tg = window.Telegram?.WebApp;
-  if (tg) tg.expand();
+<!-- Toast Notification -->
+<div id="toast" class="toast">✅ Coins Added!</div>
 
-  // State
+<script>
+  const tg = window.Telegram?.WebApp;
+  if(tg) tg.expand();
+
   let user = null;
   const $ = (s)=>document.querySelector(s);
   const balanceEl = $('#balance');
   const barEl = $('#bar');
-  const setBalance = (v)=>{ balanceEl.textContent = v; barEl.style.width = Math.min((v%100)/100*100,100)+'%'; };
+  const streakNote = $('#streakNote');
+  const historyEl = $('#history');
+  const toast = $('#toast');
+  let streak = 0;
 
-  // Helpers
-  const api = (p, data)=>fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data||{})}).then(r=>r.json());
+  const setBalance = (v)=>{
+    balanceEl.textContent=v;
+    barEl.style.width=Math.min((v%100)/100*100,100)+'%';
+  }
 
-  // Load user + leaderboard
+  const showToast = (msg,color)=>{
+    toast.textContent=msg;
+    toast.style.background=color||'var(--success)';
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),2000);
+  }
+
+  const api = (p,data)=>fetch(p,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data||{})
+  }).then(r=>r.json());
+
+  // --- Boot ---
   async function boot(){
-    const payload = { initData: tg?.initData || '', initDataUnsafe: tg?.initDataUnsafe || null };
+    const payload={initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null};
     const info = await api('/api/user', payload);
     if(!info.success){ alert(info.message||'Auth failed'); return; }
-    user = info.user;
+    user=info.user;
     setBalance(user.coins||0);
-    $('#user').textContent = JSON.stringify({
-      id:user.tgId, name:user.first_name+' '+(user.last_name||''), username:user.username, lang:user.language_code, streak:user.streak||0
-    }, null, 2);
+    streak=user.streak||0;
+    streakNote.textContent=`Streak: ${streak} days`;
+
+    $('#user').textContent=JSON.stringify({
+      id:user.tgId,name:user.first_name+' '+(user.last_name||''),username:user.username,lang:user.language_code
+    },null,2);
 
     const lb = await api('/api/leaderboard',{});
     if(lb.success){
@@ -121,66 +164,87 @@
   }
 
   // Daily Bonus
-  $('#dailyBtn').addEventListener('click', async (e)=>{
+  $('#dailyBtn').addEventListener('click',async e=>{
     e.preventDefault();
-    const res = await api('/api/daily',{ initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null });
-    if(!res.success){ alert(res.message||'Daily failed'); return; }
+    const res=await api('/api/daily',{initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null});
+    if(!res.success){ showToast(res.message,'var(--danger)'); return;}
     setBalance(res.coins);
-    alert('✅ Daily bonus: +'+res.added+' coins (streak '+res.streak+')');
+    streak=res.streak;
+    streakNote.textContent=`Streak: ${streak} days`;
+    showToast(`🎉 Daily bonus +${res.added} coins`);
   });
 
-  // Withdraw (simple request demo → backend validates min)
-  $('#withdrawBtn').addEventListener('click', async (e)=>{
+  // Withdraw
+  $('#withdrawBtn').addEventListener('click',async e=>{
     e.preventDefault();
     const amount = prompt('Withdraw কত Coins? (উদাহরণ: 5000)');
     if(!amount) return;
     const res = await api('/api/withdraw',{ amount: Number(amount), initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null });
-    alert(res.message || (res.success?'Requested ✅':'Failed ❌'));
+    showToast(res.message || (res.success?'Requested ✅':'Failed ❌'), res.success?'var(--success)':'var(--danger)');
   });
 
-  // Claim buttons: load ad → wait 5s → claim
+  // Task claim
   document.querySelectorAll('.claim').forEach(btn=>{
-    btn.addEventListener('click', async (e)=>{
+    btn.addEventListener('click',async e=>{
       e.preventDefault();
-      const amt = Number(btn.dataset.amount);
-      const adType = btn.dataset.ad; // 'banner' | 'native' | ''
-      const box = adType ? document.getElementById(adType) : null;
+      const amt=Number(btn.dataset.amount);
+      const adType=btn.dataset.ad;
+      const box=adType?document.getElementById(adType):null;
+      const bar=adType?document.getElementById(adType+'-bar'):null;
 
       if(adType && box){
-        box.innerHTML = '⏳ Loading ad…';
-        // Inject correct ad code:
-        if(adType === 'banner'){
-          // Adsterra Banner 300x250 (your key + invoke)
-          const s1 = document.createElement('script');
+        box.innerHTML='⏳ Loading ad…';
+        if(bar) bar.style.width='0%';
+        // Inject ads
+        if(adType==='banner'){
+          const s1=document.createElement('script');
           s1.type='text/javascript';
-          s1.innerHTML = `
+          s1.innerHTML=`
             atOptions = {
               'key' : '6928b0f5b1a27066c76882257e555423',
               'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {}
             };
           `;
-          const s2 = document.createElement('script');
+          const s2=document.createElement('script');
           s2.type='text/javascript';
           s2.src='//www.highperformanceformat.com/6928b0f5b1a27066c76882257e555423/invoke.js';
           box.innerHTML=''; box.appendChild(s1); box.appendChild(s2);
         }
-        if(adType === 'native'){
-          const s = document.createElement('script');
+        if(adType==='native'){
+          const s=document.createElement('script');
           s.async=true; s.setAttribute('data-cfasync','false');
           s.src='//pl25115346.profitableratecpm.com/ca1b8379ef33060d43ac0c3db8e8035e/invoke.js';
           box.innerHTML=''; box.appendChild(s);
         }
-        // enforce watch time
-        await new Promise(r=>setTimeout(r, 5000));
+
+        // Progress bar countdown
+        if(bar){
+          let width=0;
+          const interval = setInterval(()=>{
+            width+=5;
+            if(width>=100){ clearInterval(interval); bar.style.width='100%'; }
+            else bar.style.width=width+'%';
+          },250); // 5s total
+        }
+
+        await new Promise(r=>setTimeout(r,5000));
       }
 
-      // Now call backend to claim (with cooldown & auth)
-      const res = await api('/api/claim',{ amount: amt, type: adType||'task', initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null });
-      if(!res.success){ alert(res.message||'Claim failed'); return; }
+      const res=await api('/api/claim',{ amount: amt, type: adType||'task', initData: tg?.initData||'', initDataUnsafe: tg?.initDataUnsafe||null });
+      if(!res.success){ showToast(res.message,'var(--danger)'); return;}
       setBalance(res.coins);
-      alert('✅ +'+amt+' coins added!');
+      showToast(`✅ +${amt} coins`);
+      // History
+      const time=new Date().toLocaleTimeString();
+      const hist=`[${time}] +${amt} 🪙 (${adType||'Task'})`;
+      historyEl.innerHTML=`${hist}<br>${historyEl.innerHTML}`;
     });
   });
+
+  // Monetag inApp interstitial
+  if(typeof show_9768758==='function'){
+    show_9768758({ type:'inApp', inAppSettings:{ frequency:2,capping:0.1,interval:30,timeout:5,everyPage:false } });
+  }
 
   boot();
 </script>
