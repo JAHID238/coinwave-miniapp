@@ -67,7 +67,6 @@
 </div>
 
 <script>
-  // Telegram WebApp Integration
   const tg = window.Telegram?.WebApp;
   if(tg){
     tg.expand();
@@ -80,7 +79,6 @@
     }, null, 2);
   }
 
-  // Coins system
   let coins = 0;
   const coinBalance = document.getElementById('coin-balance');
   const progressBar = document.getElementById('coin-progress');
@@ -90,8 +88,7 @@
       e.preventDefault();
       let amount = parseInt(btn.dataset.coins);
       let adId = btn.dataset.ad;
-      
-      // Check if ad container exists & has content
+
       if(adId){
         const adBox = document.getElementById(adId);
         if(!adBox || adBox.innerHTML.includes("Loading")){
@@ -104,20 +101,26 @@
       coinBalance.textContent = coins + " Coins";
       let progress = Math.min((coins/100)*100,100);
       progressBar.style.width = progress+"%";
-      alert(amount + " Coins added!");
 
-      // Optional: send to backend
-      // tg.sendData(JSON.stringify({ event:'claim', coins: amount }));
+      // Backend call example
+      fetch('/api/claim', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({coins: amount, user: tg?.initDataUnsafe?.user})
+      }).then(r=>r.json()).then(d=>{
+        console.log("Server response:", d);
+      });
+
+      alert(amount + " Coins added!");
     });
   });
 
-  // Adsterra Banner
+  // Ads
   let bannerScript = document.createElement('script');
   bannerScript.type = "text/javascript";
   bannerScript.src = "//www.highperformanceformat.com/6928b0f5b1a27066c76882257e555423/invoke.js";
   document.getElementById('banner-300x250').appendChild(bannerScript);
 
-  // Adsterra Native
   let nativeScript = document.createElement('script');
   nativeScript.type = "text/javascript";
   nativeScript.async = true;
